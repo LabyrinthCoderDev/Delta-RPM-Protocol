@@ -383,7 +383,6 @@ Unauthorized commercial use, patent filings based on this work, or failure to pr
 Independent Researcher  
 [@rookepoole on X](https://x.com/rookepoole)
 
-**arXiv Endorsement**: Andrew Adamatzky (Unconventional Computing Laboratory)
 
 **Collaboration Inquiries**: Open to research partnerships, experimental validation, and computational resource sharing.
 
