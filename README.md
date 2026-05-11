@@ -389,7 +389,7 @@ Independent Researcher
 ---
 
 ## Acknowledgments
-
+- **Anuoluwapo Odubola - THE HAMILTONIAN OF ETERNAL BECOMING — COMPUTATIONAL PROOF code by Rooke Poole
 - **[https://x.com/LabyrinthCoder]]** for technical review and substrate theory proofing
 - **Community support** for theological discussions and encouragement
 
