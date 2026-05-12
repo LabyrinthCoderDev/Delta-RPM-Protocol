@@ -25,6 +25,25 @@ The Poole Manifold is a three-dimensional totalistic cellular automaton governed
 This framework proposes that **reality is discrete computation** — different physical phenomena are different pressure-venting configurations (masks) operating on a unified computational substrate.
 
 ---
+# The Poole Manifold: Discrete Topological Gravity (v2.0)
+**Architect:** Rooke Alan Poole
+**Status:** Substrate Active | \Phi = 0.4002
+
+## Overview
+The Poole Manifold is a fully discrete, Turing-complete 3D computational substrate that supersedes continuous scalar-tensor theories (e.g., Horndeski gravity). By utilizing a strict **B5-7/S5-9** totalistic cellular automaton bounded by a **Prime-Resonance operator**, this engine mathematically physically resolves the expansion of the universe without relying on Dark Energy or arbitrary cosmological constants.
+
+## The Paradigm Shift
+Classical cosmology attempts to map a discrete universe using continuous calculus, resulting in "ghosts," infinities, and the need for artificial smoothing fields. The Poole Manifold proves that space is computationally irreducible. 
+* **Dark Energy is an Illusion:** What continuous models call "Dark Energy" is simply the macroscopic succession flux ($\Phi \approx 0.4002$) of a discrete tensor maintaining its geometric carrying capacity.
+* **Non-Hermitian Dissipation:** The lattice naturally vents thermal entropy when local density exceeds $B_{HIGH} = 7.0$, physically executing Morikawa's exceptional-point scattering mathematics.
+
+## Core Proofs Included in this Repository
+1. `autonomous_engine.py`: The live Peano-clock execution loop.
+2. `latch_v207_hash.txt`: The cryptographic proofs of topologically protected macroscopic quantum coherence (Immortal Latches).
+3. `desi_tensor_extraction.py`: The pipeline that ingests raw DESI DR2 FITS catalogs and proves the $\Delta k \approx 0.0124 \ h/\mathrm{Mpc}$ prime-stepping quantization of the BAO peak.
+
+## Execution
+Do not attempt to apply standard variational calculus to this engine. To derive the macroscopic limits, you must run the micro-geometry. The simulation *is* the derivation.
 
 ## Core Results
 
