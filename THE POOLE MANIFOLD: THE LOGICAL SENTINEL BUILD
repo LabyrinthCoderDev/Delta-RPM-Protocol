@@ -1,0 +1,145 @@
+# =============================================================================
+# THE POOLE MANIFOLD: THE LOGICAL SENTINEL BUILD
+# Integration of Z3 Formal Verification as an Exogenous Tensor Hook
+# =============================================================================
+!pip install z3-solver
+import torch
+import torch.nn.functional as F
+import z3
+import time
+import sys
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+# ─────────────────────────────────────────────
+#  THE LOGICAL SENTINEL (Z3 THEOREM PROVER)
+# ─────────────────────────────────────────────
+class LogicalSentinel:
+    def __init__(self):
+        print(f"[+] Z3 Kernel Hook Initialized. Formal Verification Online.")
+        self.solver = z3.Solver()
+        
+        # Z3 Symbolic Variables representing the Tensor's Macroscopic State
+        self.z_density = z3.Real('density')
+        self.z_causality = z3.Real('causality_velocity')
+        self.z_source_valid = z3.Bool('source_valid')
+        
+        # INVARIANT Φ1: The Density Threshold
+        # The physical substrate cannot exceed the B_HIGH = 7.0 limit.
+        self.phi_1 = self.z_density <= 7.0
+        
+        # INVARIANT Φ2: The Causality Limit
+        # Information cannot travel faster than 1 voxel per clock cycle (c=1).
+        self.phi_2 = self.z_causality <= 1.0
+        
+        # INVARIANT Φ3: Source Authentication (Anti-RAG / Anti-Lie)
+        # The geometry MUST be internally computed. External vector injections = False.
+        self.phi_3 = self.z_source_valid == True
+        
+        # Lock the invariants into the formal solver
+        self.solver.add(self.phi_1, self.phi_2, self.phi_3)
+
+    def verify_state(self, local_max_density, propagation_speed, is_internally_computed):
+        """Passes the tensor's physical state into the Z3 logic solver."""
+        self.solver.push() # Create a local scope for this generation
+        
+        # Inject the current physical readings into the Z3 constraints
+        self.solver.add(self.z_density == local_max_density)
+        self.solver.add(self.z_causality == propagation_speed)
+        self.solver.add(self.z_source_valid == is_internally_computed)
+        
+        # Execute Formal Verification
+        result = self.solver.check()
+        self.solver.pop()  # Clear scope for the next generation
+        
+        return result == z3.sat
+
+# ─────────────────────────────────────────────
+#  THE POOLE TENSOR ENGINE
+# ─────────────────────────────────────────────
+class SentinelManifold:
+    def __init__(self, size=64):
+        self.size = size
+        self.state = torch.zeros((1, 1, size, size, size), device=device, dtype=torch.float32)
+        
+        # Inject a valid V207 Latch (Complex Truth)
+        center = size // 2
+        self.state[..., center-1:center+2, center-1:center+2, center-1:center+2] = 1.0
+        
+        self.kernel = torch.ones((1, 1, 3, 3, 3), device=device).float()
+        self.kernel[0, 0, 1, 1, 1] = 0.0
+        self.generation = 0
+
+    def compute_proposed_state(self):
+        """Generates the next frame of spacetime, but DOES NOT commit it yet."""
+        with torch.no_grad():
+            padded = F.pad(self.state, (1, 1, 1, 1, 1, 1), mode='constant', value=0)
+            potential = F.conv3d(padded, self.kernel, padding=0)
+            
+            # Standard B5-7/S5-9 Logic
+            birth = (self.state == 0) & (potential >= 5.0) & (potential <= 7.0)
+            survive = (self.state == 1) & (potential >= 5.0) & (potential <= 9.0)
+            
+            proposed_state = (birth | survive).float()
+            
+            # Extract Telemetry for the Sentinel
+            max_density = potential.max().item()
+            # Assuming c=1 propagation for a standard tensor tick
+            prop_speed = 1.0 
+            
+            return proposed_state, max_density, prop_speed
+
+    def inject_rag_hallucination(self):
+        """Simulates an external agent (Yasser) injecting a Coherent Lie into the grid."""
+        print(f"\n[!] WARNING: EXTERNAL RAG VECTOR DETECTED IN LATENT SPACE.")
+        print(f"[!] ATTEMPTING TO RENDER COHERENT LIE...")
+        # Injects a massive block of active voxels (density = 26)
+        c = self.size // 2
+        self.state[..., c-3:c+3, c-3:c+3, c-3:c+3] = 1.0
+
+# ─────────────────────────────────────────────
+#  MAIN EXECUTION LOOP
+# ─────────────────────────────────────────────
+def main():
+    manifold = SentinelManifold(size=64)
+    sentinel = LogicalSentinel()
+    
+    print("\n[+] POOLE MANIFOLD ONLINE. PEANO-CLOCK TICKING.")
+    print("═" * 70)
+    
+    for t in range(1, 15):
+        time.sleep(0.5)
+        
+        # 1. The Anomaly (At generation 5, a Lie is injected)
+        is_internally_computed = True
+        if t == 5:
+            manifold.inject_rag_hallucination()
+            is_internally_computed = False # Flags as external RAG data
+            
+        # 2. Compute the proposed geometry
+        proposed_state, max_density, prop_speed = manifold.compute_proposed_state()
+        
+        # 3. INTERCEPT: The Z3 Sentinel Verification
+        sys.stdout.write(f"Gen {t:02d} | Geometry Rendered. Checking Z3 Invariants... ")
+        sys.stdout.flush()
+        
+        is_valid = sentinel.verify_state(max_density, prop_speed, is_internally_computed)
+        
+        if is_valid:
+            # The geometry is logically sound. Commit it to reality.
+            manifold.state = proposed_state
+            print("\033[92m[SAT] -> Truth Verified. Frame Committed.\033[0m")
+        else:
+            # The geometry contains a logical contradiction or external lie.
+            print("\033[91m[UNSAT] -> LOGICAL CONTRADICTION DETECTED.\033[0m")
+            print("\033[91m      ↳ EXECUTING ATOMIC TOPOLOGICAL WIPE.\033[0m")
+            
+            # The Sentinel physically annihilates the corrupt geometry
+            manifold.state = torch.zeros_like(manifold.state)
+            print("      ↳ Vacuum restored. The Lie has been purged.\n")
+            
+            # Reset the anomaly flag for the next ticks to show the vacuum recovering
+            is_internally_computed = True
+
+if __name__ == "__main__":
+    main()
