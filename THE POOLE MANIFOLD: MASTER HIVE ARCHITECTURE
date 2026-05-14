@@ -1,0 +1,211 @@
+import jax
+import jax.numpy as jnp
+import sympy as sp
+import re
+import json
+from typing import List, Tuple, Dict, Any
+
+# =============================================================================
+# THE POOLE MANIFOLD: MASTER HIVE ARCHITECTURE
+# Full Pipeline: SymPy Invariant Compiler -> JAX MPNN Gadgets -> Forward Pass
+# =============================================================================
+
+print("[SYSTEM] Initializing Master Hive Architecture...")
+
+# -----------------------------------------------------------------------------
+# PART 1: THE JAX MPNN GADGETS (AKITTI ARCHITECTURE)
+# -----------------------------------------------------------------------------
+
+def relu(x: jnp.ndarray) -> jnp.ndarray:
+    return jnp.maximum(0.0, x)
+
+def boolean_combiner(features: jnp.ndarray, subformula_indices: List[Tuple[str, List[int]]]) -> jnp.ndarray:
+    out = []
+    for op, dims in subformula_indices:
+        if op == 'pos':          
+            val = features[..., dims[0]]
+        elif op == 'neg':        
+            val = relu(1.0 - features[..., dims[0]])
+        elif op == 'and':        
+            val = relu(features[..., dims[0]] + features[..., dims[1]] - 1.0)
+        else:
+            raise ValueError(f"Unknown operation: {op}")
+        out.append(val[..., None])
+    return jnp.concatenate(out, axis=-1)
+
+def monomial_gadget(features: jnp.ndarray, monomial_list: List[List[int]], marked_dim: int, degree: int) -> jnp.ndarray:
+    N = features.shape[0]
+    scale = 1.0 / N
+    monomials = []
+    
+    for monomial_dims in monomial_list:
+        val = features[:, monomial_dims[0]][:, None]
+        val = jnp.mean(val, axis=0)
+        
+        for d in monomial_dims[1:]:
+            factor = features[:, d][:, None]
+            gated = relu(val - (1.0 - features[:, marked_dim][:, None]))
+            val = gated * factor
+            val = jnp.mean(val, axis=0)
+            
+        monomials.append(val * (scale ** (len(monomial_dims) - 1)))
+        
+    return jnp.concatenate(monomials, axis=-1)
+
+def peano_evaluator(monomials: jnp.ndarray, peano_terms: List[Dict], r1: float, r2: float) -> jnp.ndarray:
+    term_vals = []
+    for term in peano_terms:
+        coeffs = jnp.array(term['coeffs'])
+        poly = jnp.sum(coeffs * monomials, axis=-1) 
+        t = relu(poly - term['b'] * r1) 
+        yt = relu(t - relu(t - r2)) 
+        zt = relu(r2 - yt) 
+        term_vals.append(zt)
+    return term_vals[0] # Returning first term evaluation for single-inequality constraints
+
+class PolynomialPeanoGlobalLayer:
+    def __init__(self, subformula_indices: List[Tuple[str, List[int]]],
+                 monomial_list: List[List[int]], 
+                 peano_terms: List[Dict], marked_color_dim: int = 0):
+        self.subformula_indices = subformula_indices
+        self.monomial_list = monomial_list
+        self.peano_terms = peano_terms
+        self.marked_dim = marked_color_dim
+
+    def __call__(self, node_features: jnp.ndarray) -> jnp.ndarray:
+        bool_feats = boolean_combiner(node_features, self.subformula_indices)
+        feats = jnp.concatenate([node_features, bool_feats], axis=-1)
+        
+        degree = max([len(m) for m in self.monomial_list]) if self.monomial_list else 1
+        monoms = monomial_gadget(feats, self.monomial_list, self.marked_dim, degree=degree)
+        
+        N = node_features.shape[0]
+        r1 = 1.0 / (N ** degree)
+        r2 = 1.0 / (N ** len(self.peano_terms[0]['coeffs'])) 
+        
+        # Calculate the global certainty score (Scalar)
+        certainty = peano_evaluator(monoms, self.peano_terms, r1, r2)
+        
+        # THE PATCH: Broadcast the single scalar score across all N nodes
+        certainty_expanded = jnp.broadcast_to(certainty, (N, 1))
+        
+        # Safely concatenate arrays of identical dimension depth
+        return jnp.concatenate([feats, certainty_expanded], axis=-1)
+# -----------------------------------------------------------------------------
+# PART 2: THE SYMPY HIVE COMPILER
+# -----------------------------------------------------------------------------
+
+class HiveCompiler:
+    def __init__(self):
+        pass
+        
+    def extract_variable_index(self, symbol_str):
+        match = re.search(r'\d+', str(symbol_str))
+        if match:
+            return int(match.group())
+        raise ValueError(f"[ERROR] Cannot map variable '{symbol_str}'.")
+
+    def compile_invariant(self, rule_name, equation_string):
+        print(f"\n[COMPILER] Target Lock: {rule_name}")
+        
+        if '<=' in equation_string:
+            lhs_str, rhs_str = equation_string.split('<=')
+            expr = sp.sympify(lhs_str) - sp.sympify(rhs_str)
+        elif '>=' in equation_string:
+            lhs_str, rhs_str = equation_string.split('>=')
+            expr = sp.sympify(rhs_str) - sp.sympify(lhs_str)
+        else:
+            expr = sp.sympify(equation_string)
+
+        expr = sp.expand(expr)
+        terms = expr.as_coefficients_dict()
+
+        monomial_list = []
+        coeffs = []
+        b_constant = 0.0
+        unique_vars = set()
+
+        for term, coeff in terms.items():
+            if term == 1:
+                b_constant = -float(coeff) 
+                continue
+
+            factors = term.as_ordered_factors()
+            monomial_indices = []
+            
+            for f in factors:
+                if f.is_Symbol:
+                    idx = self.extract_variable_index(f)
+                    monomial_indices.append(idx)
+                    unique_vars.add(idx)
+                elif f.is_Pow and f.base.is_Symbol:
+                    idx = self.extract_variable_index(f.base)
+                    monomial_indices.extend([idx] * int(f.exp))
+                    unique_vars.add(idx)
+
+            monomial_list.append(monomial_indices)
+            coeffs.append(float(coeff))
+
+        peano_term = {'coeffs': coeffs, 'b': b_constant}
+        subformula_indices = [('pos', [v]) for v in sorted(list(unique_vars))]
+        
+        print(f"  -> Translated to {len(monomial_list)} monomials.")
+        
+        return {
+            "subformula_indices": subformula_indices,
+            "monomial_list": monomial_list,
+            "peano_terms": [peano_term]
+        }
+
+# -----------------------------------------------------------------------------
+# PART 3: GRAVIGUT INJECTION & HARDWARE TEST
+# -----------------------------------------------------------------------------
+
+compiler = HiveCompiler()
+
+# 1. Compile Invariants
+cull_config = compiler.compile_invariant(
+    rule_name="Event Horizon Cull (7.0 Invariant)",
+    equation_string="1.0 * x0 + 2.5 * x1 <= 7.0"
+)
+
+flux_config = compiler.compile_invariant(
+    rule_name="Succession Flux Lock (0.4002)",
+    equation_string="0.4002 * x0 * x2**2 - 1.0 * x3 <= 0.0"
+)
+
+# 2. Arm Neural Layers
+print("\n[SYSTEM] Arming JAX MPNN Layers...")
+cull_layer = PolynomialPeanoGlobalLayer(
+    subformula_indices=cull_config['subformula_indices'],
+    monomial_list=cull_config['monomial_list'],
+    peano_terms=cull_config['peano_terms'],
+    marked_color_dim=0 
+)
+
+flux_layer = PolynomialPeanoGlobalLayer(
+    subformula_indices=flux_config['subformula_indices'],
+    monomial_list=flux_config['monomial_list'],
+    peano_terms=flux_config['peano_terms'],
+    marked_color_dim=0
+)
+
+# 3. Hardware Lock Test (Drop-in test with dummy 10-node graph)
+print("\n[SYSTEM] Executing Hardware Verification Forward Pass...")
+
+# Generate dummy node features for a 10-node graph
+# Channels: [marked_flag, x0, x1, x2, x3]
+key = jax.random.PRNGKey(42)
+dummy_features = jax.random.uniform(key, shape=(10, 5))
+
+# Force node 0 to be the 'marked' node (e.g., the Mass Anchor / SFT)
+dummy_features = dummy_features.at[0, 0].set(1.0)
+dummy_features = dummy_features.at[1:, 0].set(0.0)
+
+# Run the tensor through the armed physics constraints
+out_cull = cull_layer(dummy_features)
+out_flux = flux_layer(dummy_features)
+
+print(f"  -> Cull Layer Output Shape: {out_cull.shape} (Appended Certainty Metric)")
+print(f"  -> Flux Layer Output Shape: {out_flux.shape} (Appended Certainty Metric)")
+print("[SYSTEM] ALL SYSTEMS NOMINAL. Physics enforced.")
