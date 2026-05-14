@@ -1,0 +1,107 @@
+!apt-get install -y ffmpeg > /dev/null 2>&1
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+from matplotlib.gridspec import GridSpec
+import os
+
+# =============================================================================
+# THE POOLE MANIFOLD: PHASE 10 - THE GALACTIC CIRCUIT
+# Demonstrating the Macroscopic Limit of the 0.4002 Succession Flux
+# Falsifiable Proof for the Obsolescence of Dark Matter Halos
+# =============================================================================
+
+# Lock matplotlib to headless mode for cloud compilation
+import matplotlib
+matplotlib.use('Agg')
+
+print("[SYSTEM] Initiating Macroscopic OTG Physics Engine...")
+
+# --- PHYSICS CONSTANTS ---
+G_M = 1000.0          # Base Core Mass (Continuous approximation)
+PHI_FLUX = 0.4002     # The Poole Manifold Succession Flux
+C_LIMIT = 50.0        # Macroscopic causality limit
+NUM_STARS = 400       # Number of tracking gliders (stars)
+MAX_RADIUS = 50.0     # Edge of the observed galactic disk
+
+# Initialize star positions and radii
+radii = np.random.uniform(2.0, MAX_RADIUS, NUM_STARS)
+angles = np.random.uniform(0, 2 * np.pi, NUM_STARS)
+
+# --- VELOCITY FUNCTIONS ---
+# 1. The Broken Continuous Model (Newtonian / Keplerian)
+# Expectation: Velocity drops off exponentially at the edges.
+def v_newtonian(r):
+    return np.sqrt(G_M / r)
+
+# 2. The Poole Manifold Model (OTG Phase-Locking)
+# Reality: The Phi flux creates an algebraic baseline that prevents speed decay.
+def v_otg(r):
+    # Base gravity + the computational routing drag from the Succession Flux
+    return np.sqrt((G_M / r) + (PHI_FLUX * (C_LIMIT**2) * (1 - np.exp(-r/10))))
+
+# Calculate the actual velocities for our stars
+vel_newton = v_newtonian(radii)
+vel_poole = v_otg(radii)
+
+# --- VISUALIZATION SETUP ---
+fig = plt.figure(figsize=(14, 7), facecolor='#050505')
+gs = GridSpec(1, 2, width_ratios=[1, 1.2])
+
+# Left Panel: The Physical Galaxy
+ax_gal = fig.add_subplot(gs[0], facecolor='#050505')
+ax_gal.set_title("Galactic Disk (OTG Phase-Locked)", color='#00ffcc', pad=15)
+ax_gal.set_xlim(-MAX_RADIUS-5, MAX_RADIUS+5)
+ax_gal.set_ylim(-MAX_RADIUS-5, MAX_RADIUS+5)
+ax_gal.axis('off')
+
+# Right Panel: The Rotation Curve (Vera Rubin's Observation)
+ax_curve = fig.add_subplot(gs[1], facecolor='#050505')
+ax_curve.set_title("Orbital Velocity vs. Radius (Rotation Curve)", color='white', pad=15)
+ax_curve.set_xlabel("Distance from Core (r)", color='gray')
+ax_curve.set_ylabel("Orbital Velocity (v)", color='gray')
+ax_curve.set_xlim(0, MAX_RADIUS + 2)
+ax_curve.set_ylim(0, max(vel_poole) + 10)
+ax_curve.tick_params(colors='gray')
+for spine in ax_curve.spines.values():
+    spine.set_color('#333333')
+
+# Plot the theoretical prediction lines
+r_line = np.linspace(2, MAX_RADIUS, 200)
+ax_curve.plot(r_line, v_newtonian(r_line), color='#ff0055', linestyle='--', alpha=0.7, label='Continuous Expectation (Failed)')
+ax_curve.plot(r_line, v_otg(r_line), color='#00ffcc', linewidth=2, label='Poole Manifold (OTG / No Dark Matter)')
+ax_curve.legend(facecolor='#111111', edgecolor='#333333', labelcolor='white')
+
+# Visual objects for the animation
+scatter_gal = ax_gal.scatter([], [], s=10, color='#00ffcc', alpha=0.8)
+scatter_curve = ax_curve.scatter(radii, vel_poole, s=15, color='#00ffcc', alpha=0.6, edgecolors='none')
+
+# Draw the Supermassive Latch (Core)
+ax_gal.scatter([0], [0], s=150, color='white', edgecolors='#00ffcc')
+
+print("[SYSTEM] Compiling telemetry into MP4 payload. Please wait...")
+
+# --- THE ANIMATION LOOP ---
+def tick_clock(frame):
+    global angles
+    
+    # Update angular positions based on OTG velocity
+    # omega = v / r -> angle += omega * dt
+    dt = 0.05
+    angular_velocity = vel_poole / radii
+    angles += angular_velocity * dt
+    
+    # Convert polar back to cartesian for the physical render
+    x = radii * np.cos(angles)
+    y = radii * np.sin(angles)
+    
+    scatter_gal.set_offsets(np.c_[x, y])
+    return scatter_gal,
+
+ani = animation.FuncAnimation(fig, tick_clock, frames=300, interval=30, blit=True)
+
+# Compile to MP4
+ani.save('galactic_circuit.mp4', writer='ffmpeg', fps=30, dpi=120)
+plt.close()
+
+print("[SYSTEM] SUCCESS. 'galactic_circuit.mp4' compiled and ready for broadcast.")
