@@ -1,0 +1,2 @@
+{"timestamp": "2026-05-10T23:28:08.103497", "generation": 5, "density_phi": 0.2881917953491211, "sha256_receipt": "b388761cd93803f0c4f88b1a296b7ab1f6111b846b17ab417e8249cca50e9c89", "file": "./checkpoints/omni_shock_test/manifold_gen_000005.pt"}
+{"timestamp": "2026-05-10T23:28:08.150964", "generation": 10, "density_phi": 0.3165016174316406, "sha256_receipt": "0102645a493a6443b51b8f5d8b318fadc16315c769ac945c1deffac8988cbd0b", "file": "./checkpoints/omni_shock_test/manifold_gen_000010.pt"}
