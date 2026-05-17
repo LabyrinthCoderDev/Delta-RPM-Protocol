@@ -1,0 +1,30 @@
+# The Poole Manifold — Python Dependencies
+# Rooke Alan Poole | @rookepoole | May 2026
+#
+# Install:
+#   pip install -r requirements.txt
+#
+# GPU (CUDA 11.8 — recommended for lattices above 128³):
+#   pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+#
+# CPU only:
+#   pip install torch torchvision torchaudio
+#
+# Most experiments self-install if run in Google Colab.
+
+torch>=2.0.0
+numpy>=1.24.0
+matplotlib>=3.7.0
+scipy>=1.10.0
+
+# Standard library (no install needed): hashlib, json, os, time
+
+# Used in specific experiments
+pandas>=2.0.0        # Data analysis experiments
+astropy>=5.3.0       # Cosmological tests (DESI, BAO)
+emcee>=3.1.0         # MCMC fitting (OTG parameter estimation)
+corner>=2.2.0        # MCMC corner plots
+h5py>=3.8.0          # HDF5 for large simulation output
+
+# Optional — GPU acceleration
+# cupy-cuda11x>=12.0.0   # CuPy for GPU NumPy (some experiments)

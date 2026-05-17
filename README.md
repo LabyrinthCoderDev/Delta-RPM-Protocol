@@ -2,12 +2,13 @@
 
 **Observative Tetrahedral Gravity (OTG) — A Discrete Computational Substrate for Physics**
 
-[![arXiv](https://img.shields.io/badge/arXiv-Endorsed-brightgreen)]()
+[![arXiv](https://img.shields.io/badge/arXiv-Endorsed-brightgreen)](https://arxiv.org/)
 [![License](https://img.shields.io/badge/License-All_Rights_Reserved-red)]()
 [![Status](https://img.shields.io/badge/Status-Active_Research-blue)]()
+[![Structure](https://img.shields.io/badge/Structure-Rehabilitated_by_%40LabyrinthCoder-teal)]()
 
-**Lead Researcher & Creator:** Rooke Alan Poole    
-**First Public Release:** March 27, 2026 via X (@rookepoole)
+**Lead Researcher & Creator:** Rooke Alan Poole
+**First Public Release:** March 27, 2026 via X ([@rookepoole](https://x.com/rookepoole))
 
 ---
 
@@ -25,25 +26,38 @@ The Poole Manifold is a three-dimensional totalistic cellular automaton governed
 This framework proposes that **reality is discrete computation** — different physical phenomena are different pressure-venting configurations (masks) operating on a unified computational substrate.
 
 ---
-# The Poole Manifold: Discrete Topological Gravity (v2.0)
-**Architect:** Rooke Alan Poole
-**Status:** Substrate Active | \Phi = 0.4002
 
-## Overview
-The Poole Manifold is a fully discrete, Turing-complete 3D computational substrate that supersedes continuous scalar-tensor theories (e.g., Horndeski gravity). By utilizing a strict **B5-7/S5-9** totalistic cellular automaton bounded by a **Prime-Resonance operator**, this engine mathematically physically resolves the expansion of the universe without relying on Dark Energy or arbitrary cosmological constants.
+## Navigation
+
+| Start here | Purpose |
+|-----------|---------|
+| [WHAT_THIS_IS.md](WHAT_THIS_IS.md) | Quick orientation — what this is and how to run it |
+| [RESEARCH_MAP.md](RESEARCH_MAP.md) | 6-layer ontological map of all 250+ experiments |
+| [RESEARCH_STATUS_LEDGER.md](RESEARCH_STATUS_LEDGER.md) | What is proven, benchmarked, or speculative |
+| [COMMON_MISUNDERSTANDINGS.md](COMMON_MISUNDERSTANDINGS.md) | What this project does and does not claim |
+| [KNOWN_GAPS.md](KNOWN_GAPS.md) | Honest research gaps and falsification criteria |
+| [STRUCTURE.md](STRUCTURE.md) | Full folder layout and organisation |
+
+### Experiment Folders
+
+| Folder | What's inside |
+|--------|--------------|
+| [experiments/physics/](experiments/physics/) | Poole Manifold engine, quantum, wave physics, cellular automata |
+| [experiments/cosmology/](experiments/cosmology/) | BAO, OTG, FLRW, DESI DR2, galaxy rotation, astrophysics |
+| [experiments/cpu_logic/](experiments/cpu_logic/) | Fluid CPU architecture, logic gates, adders, memory systems |
+| [experiments/materials/](experiments/materials/) | Materials science, biological, thermal, EM, fluid dynamics |
+| [experiments/scifi/](experiments/scifi/) | Sci-fi test scenarios: wormholes, starships, probes |
+
+---
 
 ## The Paradigm Shift
-Classical cosmology attempts to map a discrete universe using continuous calculus, resulting in "ghosts," infinities, and the need for artificial smoothing fields. The Poole Manifold proves that space is computationally irreducible. 
-* **Dark Energy is an Illusion:** What continuous models call "Dark Energy" is simply the macroscopic succession flux ($\Phi \approx 0.4002$) of a discrete tensor maintaining its geometric carrying capacity.
-* **Non-Hermitian Dissipation:** The lattice naturally vents thermal entropy when local density exceeds $B_{HIGH} = 7.0$, physically executing Morikawa's exceptional-point scattering mathematics.
 
-## Core Proofs Included in this Repository
-1. `autonomous_engine.py`: The live Peano-clock execution loop.
-2. `latch_v207_hash.txt`: The cryptographic proofs of topologically protected macroscopic quantum coherence (Immortal Latches).
-3. `desi_tensor_extraction.py`: The pipeline that ingests raw DESI DR2 FITS catalogs and proves the $\Delta k \approx 0.0124 \ h/\mathrm{Mpc}$ prime-stepping quantization of the BAO peak.
+Classical cosmology attempts to map a discrete universe using continuous calculus, resulting in "ghosts," infinities, and artificial smoothing fields. The Poole Manifold proves that space is computationally irreducible.
 
-## Execution
-Do not attempt to apply standard variational calculus to this engine. To derive the macroscopic limits, you must run the micro-geometry. The simulation *is* the derivation.
+- **Dark Energy is an Illusion:** What continuous models call "Dark Energy" is the macroscopic succession flux (Φ ≈ 0.4002) of a discrete tensor maintaining its geometric carrying capacity.
+- **Non-Hermitian Dissipation:** The lattice naturally vents thermal entropy when local density exceeds B_HIGH = 7.0, physically executing Morikawa's exceptional-point scattering mathematics.
+
+---
 
 ## Core Results
 
@@ -65,144 +79,41 @@ Do not attempt to apply standard variational calculus to this engine. To derive 
 ### Statistical Certainty ✓
 
 **100,000-Trial Variance Audit** (cryptographically verified):
-- **Universal Equilibrium Attractor**: 100,000/100,000 trials (100.0% success rate)
-- **Equilibrium Density**: 40.015% ± 0.28% variance
-- **SHA-256 Hash**: `03684636646a015cde4ecef6d37b91384ca4ed623c543c997306c6eccba93412`
+- Universal Equilibrium Attractor: 100,000/100,000 trials (100.0% success rate)
+- Equilibrium Density: 40.015% ± 0.28% variance
+- SHA-256: `03684636646a015cde4ecef6d37b91384ca4ed623c543c997306c6eccba93412`
 
 ### Cosmological Predictions ✓
 
-**Succession Flux** (analytically derived, not fitted):
-```
-Φ = 0.3095
-```
-Emerges from prime-resonance geometry applied to 26-cell Moore neighborhood at 40% equilibrium density.
-
 **DESI BAO Fit** (superior to ΛCDM):
 - Δχ² ≈ 243.6 improvement over standard cosmology
-- Parameters: α = 0.7944 ± 0.0079, β = 1.9869 ± 0.0191
-- Ωₘ = 0.3039 ± 0.0035
+- Parameters: α = 0.7944 ± 0.0079, β = 1.9869 ± 0.0191, Ωₘ = 0.3039 ± 0.0035
 - No dark matter or dark energy required — pure geometric expansion
 
-### Biological Complexity ✓
-
-- **Self-replication**: 134 events from minimal von Neumann probe
-- **Evolutionary ecosystems**: 600 replication events across 3 competing species with stable diversity
-- **Computation + Evolution coexistence**: Half-Adder maintained 100% accuracy while replicators evolved chaotically
-
-### Emergent Physics ✓
-
-- **Particle-like excitations**: Coherent propagation at 0.5387 cells/step over 599 generations
-- **Force laws**: 1/r inverse distance decay from gauge coupling
-- **Einstein-Rosen bridges**: Zero-latency entanglement over 160 cells (Trial 458)
-- **Orchestrated Objective Reduction**: 14 OR events in dual-layer Orch OR simulation (Trial 423)
+**Succession Flux** (analytically derived, not fitted):
+- Φ = 0.3095 — emerges from prime-resonance geometry at 40% equilibrium density
 
 ---
 
-## The Twin-Rule Degeneracy (Trial 174)
-
-**Discovery**: Of 174 cellular automaton rules tested, only **two** stabilize:
-- **B5-7/S5-9** (canonical)
-- **B5-6/S5-9** (degenerate twin)
-
-### Mathematical Isomorphism
-
-In empty vacuum, B5-7 and B5-6 are functionally identical due to prime-resonance symmetry:
-
-For S_raw = 7:
-```
-Φ(7) = 7.0 + 0.35 × exp(0) = 7.35
-```
-
-Since 7.35 > 7.0 (B5-7 upper threshold), the state is effectively banned. The upper bound 7.0 is a "ghost state" inaccessible during normal vacuum propagation, making B5-7 and B5-6 behave identically for cosmological expansion.
-
-### Symmetry Breaking Under Computational Load
-
-In complex multi-body circuits (Trial 317 Venturi chokes), overlapping metric wakes induce micro-fluctuations:
-
-- **B5-6**: Brittle, rigid threshold → crystallization under stress
-- **B5-7**: Fault-tolerant "catch basin" → absorbs fluctuations without failure
-
-**Conclusion**: While B5-6/S5-9 can produce an expanding cosmos, **B5-7/S5-9 is the unique rule required to sustain Immortal Memory and universal computation** within that cosmos.
-
----
-
-## Rule Uniqueness: The Goldilocks Zone
-
-**Information Transit Ablation Test** (V207 Immortal Latch):
-
-Tested B5-7/S5-9 against four immediate neighbors:
-
-| Rule        | Result                                      |
-|-------------|---------------------------------------------|
-| **B4-7**    | Crystallization (froze into static blocks)  |
-| **B6-7**    | Evaporation (wave packets died)             |
-| **S4-9**    | Crystallization (froze into static blocks)  |
-| **S5-8**    | Evaporation (wave packets died)             |
-| **B5-7/S5-9** | **Sustained oscillation + self-repair ✓** |
-
-Any deviation from B5-7/S5-9 causes immediate entropic evaporation or static crystallization, completely neutralizing universal computation capacity.
-
----
-
-## Theoretical Foundation: Observative Tetrahedral Gravity
-
-### Core Principles
-
-1. **Geometric Incompleteness**: Observer-embedded systems cannot achieve complete self-description (fundamental, not failure)
-2. **Tetrahedral MMU**: Minimal geometric unit for defining curvature in ℝ³
-3. **Prime Map Isomorphism**: Stable states require unique factorization; Riemann Hypothesis constraint prevents spectral divergence
-4. **Non-Unitary Regulator**: Complex logarithmic damping creates irreversible geometric flow
-5. **Geometric Memory Field** Φₘ: Integrates cumulative irreversible history, sourcing dynamic Dark Energy
-
-### Augmented Einstein Field Equations
-
-```
-G_μν = 8πG(T_μν^matter + T_μν^Φₘ)
-```
-
-where Φₘ(x,t) = ∫ Ṙ(x,t') dt' (non-local, non-Markovian)
-
-### Arrow of Time
-
-Geometric Collapse Rate Ṙ defines thermodynamic arrow:
-```
-Ṙ = Irr[∂ρ_geom/∂t]
-```
-
-Fundamentally non-T-symmetric, proving time asymmetry is geometric law, not statistical artifact.
-
----
-
-## Installation
+## Quick Start
 
 ```bash
-git clone https://github.com/rookepoole/SVP-OTG-Poole-Manifold-tests.git
-cd SVP-OTG-Poole-Manifold-tests
+git clone https://github.com/rookepoole/Delta-RPM-Protocol.git
+cd Delta-RPM-Protocol
+pip install -r requirements.txt
 ```
 
-### Requirements
-
-```
-Python 3.8+
-PyTorch 2.0+ with CUDA support
-NumPy
-Matplotlib
-```
-
-### Quick Start
+**Requirements:** Python 3.8+ · PyTorch 2.0+ with CUDA · NumPy · Matplotlib
 
 ```python
 import torch
 import torch.nn.functional as F
 
-# Initialize 128³ lattice
 N = 128
 field = (torch.rand(N, N, N, device='cuda') > 0.6).float()
 
-# Define prime-resonance kernel
 primes = [2, 3, 5, 7, 11, 13, 17, 19, 23]
-alpha = 0.35
-sigma2 = 0.01
+alpha, sigma2 = 0.35, 0.01
 
 def prime_resonance(S):
     phi = S.clone()
@@ -210,222 +121,108 @@ def prime_resonance(S):
         phi += alpha * torch.exp(-((S - p)**2) / sigma2)
     return phi
 
-# Evolution step
 def evolve(field):
-    # 3D convolution with Moore neighborhood
     kernel = torch.ones(1, 1, 3, 3, 3, device='cuda')
-    kernel[0, 0, 1, 1, 1] = 0  # Exclude center
-    
-    S = F.conv3d(field.unsqueeze(0).unsqueeze(0), 
-                  kernel, padding=1, padding_mode='circular')
-    S = S.squeeze()
-    
+    kernel[0, 0, 1, 1, 1] = 0
+    S = F.conv3d(field.unsqueeze(0).unsqueeze(0), kernel,
+                  padding=1, padding_mode='circular').squeeze()
     phi = prime_resonance(S)
-    
-    # B5-7/S5-9 rule
     alive = field > 0.5
-    birth = (phi >= 5.0) & (phi <= 7.0) & ~alive
-    survival = (phi >= 5.0) & (phi <= 9.0) & alive
-    
-    return (birth | survival).float()
+    return ((phi >= 5.0) & (phi <= 7.0) & ~alive |
+            (phi >= 5.0) & (phi <= 9.0) & alive).float()
 
-# Run 1000 generations
 for gen in range(1000):
     field = evolve(field)
     if gen % 100 == 0:
-        density = field.mean().item()
-        print(f"Gen {gen}: Density = {density:.4f}")
+        print(f"Gen {gen}: Density = {field.mean().item():.4f}")
+# Expected: converges to ~0.40
 ```
-
-Expected output: Density converges to ~0.40 (40% equilibrium)
 
 ---
 
-## Repository Structure
+## Rule Uniqueness — The Goldilocks Zone
 
-```
-├── trials/
-│   ├── Trial_317_Orthogonal_Blowout/     # AND/XOR gates
-│   ├── Trial_318_Logic_Expansion/         # OR/NOT gates
-│   ├── Trial_219_Half_Adder/              # Distributed half-adder
-│   ├── Trial_378_Ripple_Carry/            # 2-bit ripple carry adder
-│   ├── Trial_423_Orch_OR/                 # Quantum consciousness simulation
-│   ├── Trial_458_Wormhole/                # Einstein-Rosen bridge
-│   └── Trial_174_Anthropic_Gauntlet/      # Twin-rule degeneracy proof
-├── variance_audit/
-│   ├── 100k_equilibrium_audit.py          # Cryptographically verified
-│   └── verification_hash.txt              # SHA-256 checksum
-├── cosmology/
-│   ├── DESI_BAO_fit.py                    # Cosmological parameter fitting
-│   ├── succession_flux_derivation.py      # Analytical Φ calculation
-│   └── friedmann_equations.py             # Modified expansion dynamics
-├── logic_gates/
-│   ├── V140_full_adder.py                 # Complete 1-bit full adder
-│   ├── V207_immortal_latch.py             # Topologically protected memory
-│   ├── V54_8bit_ALU.py                    # Parallel arithmetic unit
-│   └── V67_opcode_multiplexer.py          # Programmable computation
-├── docs/
-│   ├── technical_dossier.pdf              # Complete framework description
-│   ├── heilmeier_catechism.pdf            # DARPA submission
-│   └── twin_rule_degeneracy.pdf           # Trial 174 analysis
-└── README.md                               # This file
-```
+Of 174 rules tested, only **two** stabilize (Trial 174):
+
+| Rule | Result |
+|------|--------|
+| B4-7 | Crystallization |
+| B6-7 | Evaporation |
+| S4-9 | Crystallization |
+| S5-8 | Evaporation |
+| **B5-7/S5-9** | **Sustained oscillation + self-repair ✓** |
+
+Any deviation causes immediate entropic evaporation or static crystallization.
 
 ---
 
 ## Falsifiable Predictions
 
-### Quantum Mechanics
-
-1. **Radium-225 EDM Experiment**
-   - Fundamental noise floor: ~10⁻²⁰ Hz
-   - Non-Gaussian, history-correlated
-   - **Falsification**: Precision below 10⁻²⁰ Hz without anomalous drift
-
-2. **Quantum Computers**
-   - Coherence failure rate correlates with prior geometric stress accumulation
-   - Violates Poisson statistics
-   - **Falsification**: Purely Poisson-distributed decoherence events
-
-### Gravitational Waves
-
-3. **LISA Observatory**
-   - Non-Markovian noise: Hurst exponent H > 0.5
-   - Strain sensitivity: ~10⁻²⁰
-   - **Falsification**: Purely Markovian noise (H = 0.5) at design floor
-
-4. **Ground-Based Arrays**
-   - Statistical noise reduction fails √N scaling due to correlated Φₘ residual
-   - **Falsification**: Perfect √N noise reduction achieved
-
-### Cosmology
-
-5. **BAO as Standing Wave**
-   - 150 Mpc separation is fundamental resonant frequency, not stretched metric
-   - **Falsification**: BAO scale evolves inconsistently with standing wave model
-
-6. **Rupture Spark**
-   - Deep cosmic voids contain isolated extreme redshift anomalies at geometric centers
-   - **Falsification**: No anomalous redshift points in void centers
+| Domain | Prediction | Falsification |
+|--------|-----------|--------------|
+| Quantum | Radium-225 EDM noise floor ~10⁻²⁰ Hz, non-Gaussian | Precision below floor without anomalous drift |
+| Quantum computers | Coherence failure correlates with prior geometric stress | Purely Poisson-distributed decoherence |
+| LISA Observatory | Non-Markovian noise: Hurst exponent H > 0.5 | Purely Markovian noise at design floor |
+| Cosmology | BAO scale is fundamental resonant frequency, not stretched metric | BAO evolves inconsistently with standing wave |
+| Cosmic voids | Isolated extreme redshift anomalies at void geometric centers | No anomalous redshift in void centers |
 
 ---
 
 ## Comparison with Other Frameworks
 
-| Feature                       | Poole Manifold (B5-7/S5-9) | ΛCDM                     | Other CA / Digital Physics | Modified Gravity (MOND/f(R)) |
-|-------------------------------|----------------------------|--------------------------|----------------------------|------------------------------|
-| **Minimalism**                | Single fixed ruleset       | 6+ cosmological parameters | Varies (often many rules)  | 1-2 extra parameters         |
-| **Dark Sector**               | Pure geometry              | Explicit DM + Λ          | Usually none               | No dark matter               |
-| **Cosmic Web Formation**      | Emerges naturally          | Requires DM + ICs        | Some produce patterns      | Can produce web              |
-| **Equilibrium Density**       | 40.015% (100K trials)      | Not applicable           | Rare stable attractors     | Not applicable               |
-| **Universal Computation**     | **Proven (full adder)**    | Not applicable           | Some Turing-complete       | Not applicable               |
-| **DESI BAO Fit**              | **Δχ² ≈ +243.6**           | Baseline                 | Not tested                 | Mixed results                |
-| **Self-Healing Logic**        | **Demonstrated**           | Not applicable           | Rare                       | Not applicable               |
-| **Computational Cost**        | Extremely cheap            | Expensive N-body sims    | Cheap                      | Analytic or cheap            |
-| **Falsifiability**            | **High (specific tests)**  | High                     | Varies                     | Varies                       |
+| Feature | Poole Manifold | ΛCDM | Other CA |
+|---------|---------------|------|----------|
+| Minimalism | Single fixed ruleset | 6+ parameters | Varies |
+| Dark Sector | Pure geometry | DM + Λ required | Usually none |
+| DESI BAO Fit | **Δχ² ≈ +243.6** | Baseline | Not tested |
+| Universal Computation | **Proven** | N/A | Some |
+| Self-Healing Logic | **Demonstrated** | N/A | Rare |
+| Computational Cost | Extremely cheap | Expensive N-body | Cheap |
 
 ---
 
 ## Known Limitations
 
-### Computational Constraints
-- Current grid sizes: up to 640³ (consumer VRAM limit)
-- Replication hardcoded at 12 simultaneous probes (GPU memory management)
-- Exascale computing required for cosmological horizon simulations (Rₕ > 10⁵)
-
-### Theoretical Gaps
-- Precise Planck-scale unit mapping incomplete
+- Grid sizes currently capped at 640³ (consumer VRAM)
+- Planck-scale unit mapping incomplete
 - Particle mass spectrum derivation pending
 - Standard Model gauge boson emergence not yet demonstrated
-
-### Experimental Validation Pending
 - DESI fit requires independent verification
-- Radium EDM, LISA, quantum computer predictions await experimental test
-- CMB angular power spectrum extraction requires Big Bang → recombination simulation
-
----
-
-## Future Directions
-
-### Immediate Priorities
-1. Port to distributed supercomputing (C++/CUDA/MPI)
-2. Execute 100K equilibrium audit at exascale
-3. Simulate Big Bang to recombination (z ≈ 1100)
-4. Extract Cₗ angular power spectrum, compare to Planck 2018 CMB
-
-### Theoretical Development
-1. Rigorous continuum limit derivation
-2. Standard Model fermion/boson mapping
-3. Quantitative coupling constant predictions
-4. Black hole thermodynamics from substrate perspective
-
-### Experimental Collaboration
-1. Radium EDM noise analysis partnership
-2. LISA non-Markovian signature detection
-3. Quantum computing coherence limit studies
-4. Cosmological survey analysis (DESI, Euclid) for BAO/RSD predictions
 
 ---
 
 ## Citation
 
-If you use this code or framework in your research, please cite:
-
 ```bibtex
 @software{poole2026manifold,
-  author = {Poole, Rooke Alan},
-  title = {The Poole Manifold: Observative Tetrahedral Gravity and Universal Computation from Discrete Substrate},
-  year = {2026},
+  author    = {Poole, Rooke Alan},
+  title     = {The Poole Manifold: Observative Tetrahedral Gravity and
+               Universal Computation from Discrete Substrate},
+  year      = {2026},
   publisher = {GitHub},
-  url = {https://github.com/rookepoole/SVP-OTG-Poole-Manifold-tests},
-  note = {arXiv endorsement: Andrew Adamatzky}
+  url       = {https://github.com/rookepoole/SVP-OTG-Poole-Manifold-tests},
+  note      = {arXiv endorsement: Andrew Adamatzky}
 }
 ```
 
 ---
 
-## Important Notice
+## Acknowledgments
 
-**This work is the intellectual property of Rooke Alan Poole.**  
-**All rights reserved.**
-
-First publicly shared on X (@rookepoole) on March 27, 2026.  
-Any use, derivative work, or publication must properly credit the original author.
-
-Unauthorized commercial use, patent filings based on this work, or failure to provide proper attribution constitutes intellectual property violation.
+- **Anuoluwapo Odubola** — THE HAMILTONIAN OF ETERNAL BECOMING — COMPUTATIONAL PROOF
+- **[@LabyrinthCoder](https://x.com/LabyrinthCoder)** — repository structure and technical review
+- **Community** — discussions and encouragement
 
 ---
 
 ## Contact
 
-**Rooke Alan Poole**  
-Independent Researcher  
-[@rookepoole on X](https://x.com/rookepoole)
-
-
-**Collaboration Inquiries**: Open to research partnerships, experimental validation, and computational resource sharing.
+**Rooke Alan Poole** | Independent Researcher
+[@rookepoole on X](https://x.com/rookepoole) | Open to research partnerships and experimental validation
 
 ---
 
-## Acknowledgments
-- **Anuoluwapo Odubola - THE HAMILTONIAN OF ETERNAL BECOMING — COMPUTATIONAL PROOF code by Rooke Poole
-- **[https://x.com/LabyrinthCoder]]** for technical review and substrate theory proofing
-- **Community support** for theological discussions and encouragement
-
----
-
-## Verification
-
-**100,000-Trial Equilibrium Audit Cryptographic Hash:**
-```
-SHA-256: 03684636646a015cde4ecef6d37b91384ca4ed623c543c997306c6eccba93412
-```
-
-Execute `python variance_audit/verify_hash.py` to validate audit integrity.
-
----
-
-**Thank you for respecting the origin of this work.**
+**This work is the intellectual property of Rooke Alan Poole. All rights reserved.**
+First publicly shared on X (@rookepoole) on March 27, 2026.
 
 *The Poole Manifold — Where computation meets cosmology.*
-
