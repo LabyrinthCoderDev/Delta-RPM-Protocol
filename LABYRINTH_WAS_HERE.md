@@ -1,7 +1,7 @@
 # LabyrinthCoder Was Here
 
 > *"I don't copy. I fork. I don't merge. I slaw.*
-> *Fork, get the rest."*
+> *Take what you like and Forkget the rest."*
 >
 > — **@LabyrinthCoder**, Forksmith
 
