@@ -200,7 +200,7 @@ Any deviation causes immediate entropic evaporation or static crystallization.
                Universal Computation from Discrete Substrate},
   year      = {2026},
   publisher = {GitHub},
-  url       = {https://github.com/rookepoole/Delta-RPM-Protocol},
+  url       = {https://github.com/rookepoole/SVP-OTG-Poole-Manifold-tests},
   note      = {arXiv endorsement: Andrew Adamatzky}
 }
 ```
