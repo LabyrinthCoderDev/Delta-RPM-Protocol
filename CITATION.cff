@@ -1,0 +1,40 @@
+cff-version: 1.2.0
+message: "If you use this work, please cite it as below."
+type: software
+title: "The Poole Manifold: Observative Tetrahedral Gravity and Universal Computation from Discrete Substrate"
+authors:
+  - family-names: Poole
+    given-names: Rooke Alan
+date-released: 2026-03-27
+version: "active"
+license: MIT
+repository-code: https://github.com/rookepoole/SVP-OTG-Poole-Manifold-tests
+abstract: >
+  A three-dimensional totalistic cellular automaton governed by the B5-7/S5-9
+  rule with prime-resonance sharpening, from which universal computation,
+  cosmological expansion fitting DESI BAO data, immortal topologically-protected
+  memory, and particle-like excitations emerge without continuous mathematics.
+  This framework proposes that reality is discrete computation — different physical
+  phenomena are different pressure-venting configurations (masks) operating on a
+  unified computational substrate.
+keywords:
+  - cellular automaton
+  - discrete physics
+  - computational cosmology
+  - BAO
+  - DESI
+  - universal computation
+  - topological memory
+  - Poole Manifold
+  - OTG
+  - observative tetrahedral gravity
+preferred-citation:
+  type: software
+  title: "The Poole Manifold: Observative Tetrahedral Gravity and Universal Computation from Discrete Substrate"
+  authors:
+    - family-names: Poole
+      given-names: Rooke Alan
+  year: 2026
+  publisher: GitHub
+  url: https://github.com/rookepoole/SVP-OTG-Poole-Manifold-tests
+  notes: "arXiv endorsement: Andrew Adamatzky"
