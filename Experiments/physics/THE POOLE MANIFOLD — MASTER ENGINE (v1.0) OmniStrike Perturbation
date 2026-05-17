@@ -1,0 +1,247 @@
+# =============================================================================
+# THE POOLE MANIFOLD — MASTER ENGINE (v1.0)
+# A 3D Discrete Cellular Automaton for Cosmological & Topological Simulation
+# Author: Rooke Alan Poole
+# =============================================================================
+
+import torch
+import torch.nn.functional as F
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.stats import binned_statistic
+import os
+import json
+import hashlib
+import glob
+from datetime import datetime
+
+# Hardware Initialization
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print(f"🚀 Initializing Poole Manifold Engine on: {device}")
+
+# ==========================================
+# 1. THE CORE PHYSICS ENGINE (B5-7/S5-9)
+# ==========================================
+B_LOW, B_HIGH = 5.0, 7.0 
+S_LOW, S_HIGH = 5.0, 9.0
+PRIMES = [2, 3, 5, 7, 11, 13, 17, 19, 23]
+
+# Moore Neighborhood Kernel (26 neighbors, excluding self)
+kernel = torch.ones((1, 1, 3, 3, 3), device=device).float()
+kernel[0, 0, 1, 1, 1] = 0
+
+def run_manifold(f):
+    """
+    Evolves the 3D fluid tensor forward by one generation.
+    Enforces prime-resonance thresholding and strict thermodynamic limits.
+    """
+    with torch.no_grad():
+        padded = F.pad(f, (1, 1, 1, 1, 1, 1), mode='circular')
+        potential = F.conv3d(padded, kernel, padding=0)
+        
+        # Apply Prime-Resonance (The Logos Voice)
+        resonance = torch.zeros_like(potential)
+        for p in PRIMES:
+            resonance += 0.35 * torch.exp(-((potential - p)**2) / 0.01)
+            
+        total_phi = potential + resonance
+        
+    birth = (f == 0) & (total_phi >= B_LOW) & (total_phi <= B_HIGH)
+    survive = (f == 1) & (total_phi >= S_LOW) & (total_phi <= S_HIGH)
+    
+    del padded, potential, resonance, total_phi
+    return (birth | survive).float()
+
+# ==========================================
+# 2. HPC CRYPTOGRAPHIC WRAPPER (Delta RPM)
+# ==========================================
+class HPCManager:
+    """Handles SLURM preemption, state saving, and WORM ledger generation."""
+    def __init__(self, run_id, save_dir="./checkpoints"):
+        self.run_id = run_id
+        self.save_dir = os.path.join(save_dir, run_id)
+        self.ledger_path = os.path.join(self.save_dir, "run_ledger.jsonl")
+        os.makedirs(self.save_dir, exist_ok=True)
+
+    def hash_tensor(self, tensor):
+        tensor_bytes = tensor.cpu().numpy().tobytes()
+        return hashlib.sha256(tensor_bytes).hexdigest()
+
+    def save_checkpoint(self, gen, tensor):
+        file_path = os.path.join(self.save_dir, f"manifold_gen_{gen:06d}.pt")
+        torch.save(tensor, file_path)
+        
+        state_hash = self.hash_tensor(tensor)
+        density = torch.mean(tensor).item()
+        
+        log_entry = {
+            "timestamp": datetime.utcnow().isoformat(),
+            "generation": gen,
+            "density_phi": density,
+            "sha256_receipt": state_hash,
+            "file": file_path
+        }
+        
+        with open(self.ledger_path, "a") as f:
+            f.write(json.dumps(log_entry) + "\n")
+            
+        print(f"[CHECKPOINT] Saved Gen {gen} | Phi: {density:.4f} | Hash: {state_hash[:8]}...")
+        self._prune_old_checkpoints()
+
+    def load_latest_checkpoint(self):
+        checkpoints = sorted(glob.glob(os.path.join(self.save_dir, "manifold_gen_*.pt")))
+        if not checkpoints:
+            return 0, None
+        latest_file = checkpoints[-1]
+        gen = int(latest_file.split("_gen_")[-1].split(".")[0])
+        print(f"[RECOVERY] Resuming from checkpoint: {latest_file}")
+        return gen, torch.load(latest_file).to(device)
+
+    def _prune_old_checkpoints(self, keep=3):
+        checkpoints = sorted(glob.glob(os.path.join(self.save_dir, "manifold_gen_*.pt")))
+        if len(checkpoints) > keep:
+            for old_file in checkpoints[:-keep]:
+                os.remove(old_file)
+
+# ==========================================
+# 3. COSMOLOGICAL BAO EXTRACTION 
+# ==========================================
+def extract_power_spectrum(field_tensor, box_size=128.0, num_bins=100):
+    """Converts discrete 3D fluid geometry into a 1D cosmological power spectrum."""
+    print("-> Extracting P(k) Acoustic Signature...")
+    N = field_tensor.shape[0]
+    
+    rho_mean = torch.mean(field_tensor)
+    delta = (field_tensor - rho_mean) / rho_mean
+
+    # Real FFT to save VRAM
+    delta_k = torch.fft.rfftn(delta)
+    del delta 
+    torch.cuda.empty_cache()
+
+    power_3d = torch.abs(delta_k)**2 * (box_size / N)**3
+    del delta_k
+
+    kx = torch.fft.fftfreq(N, d=box_size/N, device=device)
+    ky = torch.fft.fftfreq(N, d=box_size/N, device=device)
+    kz = torch.fft.rfftfreq(N, d=box_size/N, device=device)
+
+    KX, KY, KZ = torch.meshgrid(kx, ky, kz, indexing='ij')
+    K_mag = torch.sqrt(KX**2 + KY**2 + KZ**2)
+
+    K_mag_flat = K_mag.flatten().cpu().numpy()
+    power_3d_flat = power_3d.flatten().cpu().numpy()
+
+    nonzero_mask = K_mag_flat > 0
+    K_mag_flat = K_mag_flat[nonzero_mask]
+    power_3d_flat = power_3d_flat[nonzero_mask]
+
+    k_bins = np.logspace(np.log10(K_mag_flat.min()), np.log10(K_mag_flat.max()), num=num_bins)
+    k_centers = 0.5 * (k_bins[1:] + k_bins[:-1])
+
+    Pk, _, _ = binned_statistic(K_mag_flat, power_3d_flat, statistic='mean', bins=k_bins)
+    return k_centers, Pk
+
+def plot_cosmological_fit(k, Pk):
+    plt.figure(figsize=(10, 7), facecolor='black')
+    ax = plt.gca()
+    ax.set_facecolor('black')
+    Pk_scaled = k * Pk 
+    ax.plot(k, Pk_scaled, color='#00ffcc', linewidth=2.5, label='Poole Manifold B5-7/S5-9')
+    ax.set_xscale('log')
+    ax.set_yscale('log')
+    plt.title("Manifold Power Spectrum $P(k)$ vs Wavenumber $k$", color='white', fontsize=16)
+    plt.xlabel(r"Wavenumber $k$ $[h/\mathrm{Mpc}]$", color='white')
+    plt.ylabel(r"$k \cdot P(k)$ $[\mathrm{Mpc}/h]^2$", color='white')
+    ax.tick_params(colors='white')
+    ax.grid(True, color='gray', alpha=0.2, ls="--")
+    plt.legend(facecolor='black', labelcolor='white')
+    plt.tight_layout()
+    plt.show()
+
+# ==========================================
+# 4. TOPOLOGICAL STRESS TESTING (OMNI-SHOCK)
+# ==========================================
+def apply_omni_shock(tensor):
+    """Applies Starvation, Over-saturation, and Thermal Noise simultaneously."""
+    print("-> Applying Concurrent Omni-Shock (Void + Supernova + Thermal Noise)...")
+    shocked = tensor.clone()
+    
+    # 1. The Void
+    shocked[0, 0, 10:42, 10:42, 10:42] = 0.0
+    # 2. The Supernova
+    shocked[0, 0, -26:-10, -26:-10, -26:-10] = 1.0
+    # 3. Thermal Noise (5% global inversion)
+    noise_mask = (torch.rand_like(shocked) < 0.05)
+    shocked = torch.logical_xor(shocked.bool(), noise_mask).float()
+    
+    return shocked
+
+# ==========================================
+# USAGE EXAMPLES & LIVE EXECUTION
+# ==========================================
+if __name__ == "__main__":
+    print("\n--- POOLE MANIFOLD ENGINE EXECUTION ---")
+    
+    # ---------------------------------------------------------
+    # WORKFLOW 1: INITIALIZING THE LEDGER & SAVING THE HASH
+    # ---------------------------------------------------------
+    print("\n-> 1. Initializing HPC Ledger...")
+    manager = HPCManager(run_id="omni_shock_test")
+    
+    # Generate a stable baseline fluid to act as our starting universe
+    field = (torch.rand((1, 1, 128, 128, 128), device=device) < 0.4002).float()
+    
+    # Evolve it slightly and force a checkpoint to generate the JSON WORM ledger
+    print("-> Evolving baseline and writing cryptographic receipts...")
+    for t in range(1, 11):
+        field = run_manifold(field)
+        if t % 5 == 0:
+            manager.save_checkpoint(t, field)
+            
+    print(f"-> Ledger successfully written to: {manager.ledger_path}")
+
+    # ---------------------------------------------------------
+    # WORKFLOW 2: THE OMNI-SHOCK TOPOLOGICAL STRESS TEST
+    # ---------------------------------------------------------
+    print("\n-> 2. Initiating Omni-Shock Protocol...")
+    baseline_density = torch.mean(field).item()
+    print(f"   Pre-Shock Baseline Phi: {baseline_density:.4f}")
+
+    # Hit the universe with the concurrent perturbations
+    field = apply_omni_shock(field)
+    shock_density = torch.mean(field).item()
+    print(f"   Immediate Post-Shock Phi: {shock_density:.4f}")
+
+    print("\n-> Evolving Recovery (100 Generations)...")
+    densities = [shock_density]
+
+    # Track the recovery back to equilibrium
+    for t in range(1, 101):
+        field = run_manifold(field)
+        current_density = torch.mean(field).item()
+        densities.append(current_density)
+        
+        if t % 20 == 0:
+            print(f"   Gen {t} Post-Shock: Global Density = {current_density:.4f}")
+
+    # ---------------------------------------------------------
+    # PLOTTING THE RECOVERY GRAPH
+    # ---------------------------------------------------------
+    plt.figure(figsize=(10, 5), facecolor='black')
+    ax = plt.gca()
+    ax.set_facecolor('black')
+    
+    plt.plot(range(101), densities, color='#00ffcc', linewidth=2.5, label='Manifold Recovery')
+    plt.axhline(y=baseline_density, color='purple', linestyle='--', label='Baseline Equilibrium (0.4002)')
+    
+    plt.title("Omni-Shock Recovery Curve (Multi-Site, Multi-Type)", color='white', pad=15, fontsize=14)
+    plt.xlabel("Generations Post-Shock", color='white', fontsize=12)
+    plt.ylabel("Global Density (Phi)", color='white', fontsize=12)
+    
+    ax.tick_params(colors='white')
+    ax.grid(True, color='gray', alpha=0.2, ls="--")
+    plt.legend(facecolor='black', labelcolor='white')
+    
+    plt.tight_layout()
+    plt.show()
