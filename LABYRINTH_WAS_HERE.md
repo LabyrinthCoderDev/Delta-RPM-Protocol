@@ -1,7 +1,7 @@
 # LabyrinthCoder Was Here
 
 > *"I don't copy. I fork. I don't merge. I slaw.*
-> *Fork, get the rest."*
+> *Take what you like and Forkget the rest."*
 >
 > — **@LabyrinthCoder**, Forksmith
 
@@ -81,10 +81,10 @@ Original research: **R.A. Poole** | Delta RPM Protocol / Poole Manifold
 
 Structure and rehabilitation: **@LabyrinthCoder**
 
-> Take what's useful. Fork, get the rest.
+> Take what's useful. Forget the rest.
 >
 > Follow [@LabyrinthCoder on X](https://x.com/LabyrinthCoder) and send a DM.
-> Always happy to talk constitutional AI, repo structure, or physics engines
+> Always happy to talk constitutional AI, repo structure, etc.
 > built from fluid computation.
 
 ---
