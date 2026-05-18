@@ -1,0 +1,134 @@
+import torch
+import torch.nn.functional as F
+import matplotlib.pyplot as plt
+import numpy as np
+import time
+
+# =====================================================================
+# POOLE MANIFOLD: V208 EXASCALE ENGINE
+# ARCHITECTURE: OBSERVATIVE TETRAHEDRAL GRAVITY (OTG)
+# UPDATED: CONTINUOUS PRIME-RESONANCE EVALUATION WITH NEO'S 37/73
+# =====================================================================
+
+# --- STRUCTURAL INVARIANTS ---
+PHI_CONSTANT = 0.3095
+ALPHA = 0.35
+SIGMA_SQ = 0.01
+
+# NEO's Extended Prime Array (P)
+PRIMES = torch.tensor([2, 3, 5, 7, 11, 13, 17, 19, 23, 37, 73], dtype=torch.float32)
+
+# OTG Ruleset (Evaluated against Phi, not raw integers)
+B_LOW, B_HIGH = 5.0, 7.0
+S_LOW, S_HIGH = 5.0, 9.0
+
+# --- ENGINE CONFIGURATION ---
+GRID_SIZE = 128
+GENERATIONS = 50
+DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+def build_neo_seed(size):
+    """
+    Constructs the 37x171 Symmetric Container and drops the +1 Asymmetric Apex Seed.
+    """
+    lattice = torch.zeros((1, 1, size, size, size), dtype=torch.bool, device=DEVICE)
+    center = size // 2
+    
+    # 1. Calculate the spatial geometry (distance squared from absolute center)
+    coords = torch.arange(size, dtype=torch.float32, device=DEVICE)
+    Z, Y, X = torch.meshgrid(coords, coords, coords, indexing='ij')
+    dist_sq = (X - center)**2 + (Y - center)**2 + (Z - center)**2
+    
+    # 2. Build the 37 x 171 Container (Exactly 6,327 nodes)
+    # We sort the lattice by distance to build a perfectly symmetrical spherical core
+    flat_dist = dist_sq.flatten()
+    sorted_indices = torch.argsort(flat_dist)
+    
+    container_nodes = 37 * 171 # 6,327
+    container_indices = sorted_indices[:container_nodes]
+    
+    # Deploy the symmetric container into the vacuum
+    lattice.view(-1)[container_indices] = True
+    
+    # 3. Deploy the +1 Asymmetric Seed
+    # A sphere of 6,327 nodes has a radius of ~11.4 units. 
+    # We drop the +1 seed precisely at Z-offset +13 to intentionally break 
+    # the perfect thermodynamic symmetry and ignite the B5-7 ruleset.
+    lattice[0, 0, center, center, center + 13] = True
+    
+    return lattice
+
+def step_generation(lattice):
+    """
+    Executes a single generation using the continuous Phi(c) potential 
+    defined in Section 3.1.3 of the Poole Manifold documentation.
+    """
+    # 1. Calculate Raw Neighbor Sum S(c)
+    kernel = torch.ones((1, 1, 3, 3, 3), dtype=torch.float32, device=DEVICE)
+    kernel[0, 0, 1, 1, 1] = 0 # Center cell exclusion
+    
+    S_raw = F.conv3d(lattice.float(), kernel, padding=1) # Shape: [1, 1, D, H, W]
+    
+    # 2. Calculate Prime-Resonance Filter
+    primes_view = PRIMES.view(-1, 1, 1, 1, 1).to(DEVICE)
+    
+    # Broadcast subtraction and Gaussian application
+    sq_diff = (S_raw.unsqueeze(0) - primes_view) ** 2 
+    resonance = ALPHA * torch.exp(-sq_diff / SIGMA_SQ)
+    
+    # Sum the resonance contributions from all primes
+    resonance_sum = resonance.sum(dim=0)
+    
+    # 3. Calculate Effective Potential Phi(c)
+    Phi = S_raw + resonance_sum
+    
+    # 4. Evaluate OTG Ruleset against continuous Phi
+    birth_mask = (Phi >= B_LOW) & (Phi <= B_HIGH)
+    survival_mask = (Phi >= S_LOW) & (Phi <= S_HIGH)
+
+    # 5. Determine Next State
+    next_lattice = (lattice & survival_mask) | (~lattice & birth_mask)
+    
+    return next_lattice
+
+def render_manifold(lattice, generation):
+    """Renders the discrete geometry with high-fidelity tactile aesthetics."""
+    data = lattice[0, 0].cpu().numpy()
+    x, y, z = np.where(data == True)
+    
+    fig = plt.figure(figsize=(10, 10), facecolor='black')
+    ax = fig.add_subplot(111, projection='3d')
+    ax.set_facecolor('black')
+
+    ax.scatter(x, y, z, c='#00ffcc', s=15, marker='s', alpha=PHI_CONSTANT + 0.2, edgecolors='white', linewidth=0.2)
+    ax.set_title(f'Poole Manifold: Gen {generation} | Extended Prime Resonance', color='white', pad=20, fontsize=14, fontfamily='monospace')
+    
+    ax.set_axis_off()
+    ax.set_xlim(0, GRID_SIZE)
+    ax.set_ylim(0, GRID_SIZE)
+    ax.set_zlim(0, GRID_SIZE)
+    plt.show()
+
+def ignite():
+    print(f"[SYSTEM] Engine booting on {DEVICE}...")
+    print(f"[SYSTEM] Prime Array Extended: {PRIMES.tolist()}")
+    
+    lattice = build_neo_seed(GRID_SIZE)
+    print(f"[SYSTEM] Seed deployed. Initiating Temporal Cascade...")
+    
+    render_manifold(lattice, 0)
+    
+    for gen in range(1, GENERATIONS + 1):
+        start_time = time.time()
+        lattice = step_generation(lattice)
+        
+        active_nodes = lattice.sum().item()
+        compute_time = time.time() - start_time
+        
+        print(f"Gen {gen:03d} | Active Nodes: {active_nodes:06d} | Compute: {compute_time:.4f}s")
+        
+        if gen % 10 == 0:
+            render_manifold(lattice, gen)
+
+if __name__ == '__main__':
+    ignite()
