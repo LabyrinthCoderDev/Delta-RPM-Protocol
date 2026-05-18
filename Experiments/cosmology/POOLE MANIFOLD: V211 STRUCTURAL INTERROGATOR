@@ -1,0 +1,124 @@
+import torch
+import torch.nn.functional as F
+import numpy as np
+import time
+
+# =====================================================================
+# POOLE MANIFOLD: V211 STRUCTURAL INTERROGATOR
+# ARCHITECTURE: OBSERVATIVE TETRAHEDRAL GRAVITY (OTG)
+# TARGET: GEN 73 INTERNAL CLUSTER DENSITY ISOLATION
+# =====================================================================
+
+# --- STRUCTURAL INVARIANTS ---
+PHI_CONSTANT = 0.3095
+ALPHA = 0.35
+SIGMA_SQ = 0.01
+PRIMES = torch.tensor([2, 3, 5, 7, 11, 13, 17, 19, 23, 37, 73], dtype=torch.float32)
+
+B_LOW, B_HIGH = 5.0, 7.0
+S_LOW, S_HIGH = 5.0, 9.0
+
+# --- ENGINE CONFIGURATION ---
+GRID_SIZE = 640               
+TARGET_GEN = 73             
+DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+def build_neo_seed(size):
+    lattice = torch.zeros((1, 1, size, size, size), dtype=torch.bool, device=DEVICE)
+    center = size // 2
+    coords = torch.arange(size, dtype=torch.float32, device=DEVICE)
+    Z, Y, X = torch.meshgrid(coords, coords, coords, indexing='ij')
+    dist_sq = (X - center)**2 + (Y - center)**2 + (Z - center)**2
+    
+    flat_dist = dist_sq.flatten()
+    sorted_indices = torch.argsort(flat_dist)
+    lattice.view(-1)[sorted_indices[:37 * 171]] = True
+    lattice[0, 0, center, center, center + 13] = True
+    return lattice
+
+def step_generation(lattice):
+    """
+    Executes a single generation using the continuous Phi(c) potential field.
+    """
+    kernel = torch.ones((1, 1, 3, 3, 3), dtype=torch.float32, device=DEVICE)
+    kernel[0, 0, 1, 1, 1] = 0 # Center cell exclusion
+    
+    # S_raw calculation
+    S_raw = F.conv3d(lattice.float(), kernel, padding=1) 
+    
+    # Prime-Resonance Filter
+    primes_view = PRIMES.view(-1, 1, 1, 1, 1).to(DEVICE)
+    sq_diff = (S_raw.unsqueeze(0) - primes_view) ** 2 
+    resonance = ALPHA * torch.exp(-sq_diff / SIGMA_SQ)
+    
+    # FIXED: The resonance_sum is calculated, THEN Phi is calculated
+    resonance_sum = resonance.sum(dim=0)
+    Phi = S_raw + resonance_sum
+    
+    # OTG Ruleset evaluation
+    birth_mask = (Phi >= B_LOW) & (Phi <= B_HIGH)
+    survival_mask = (Phi >= S_LOW) & (Phi <= S_HIGH)
+
+    return (lattice & survival_mask) | (~lattice & birth_mask)
+
+def interrogate_structure(lattice):
+    """
+    Isolates the dense V207 clusters from the vacuum and measures their 
+    internal localized density using a 9x9x9 bounding volume.
+    """
+    print("\n[SYSTEM] Initiating Structural Interrogation at Gen 73...")
+    
+    # 9x9x9 bounding volume (Volume = 729 coordinates)
+    # This represents the minimal localized neighborhood of a stable logic gate
+    vol_size = 9
+    bounding_volume = vol_size ** 3
+    
+    kernel = torch.ones((1, 1, vol_size, vol_size, vol_size), dtype=torch.float32, device=DEVICE)
+    
+    # Calculate the localized node count for every coordinate in the grid
+    local_sums = F.conv3d(lattice.float(), kernel, padding=vol_size//2)
+    
+    # We only care about the density INSIDE the actual structures.
+    # We mask out the empty vacuum (where lattice == True).
+    active_local_sums = local_sums[lattice]
+    
+    # Furthermore, to filter out lone "thermal exhaust" particles that haven't 
+    # locked into a V207 gate yet, we isolate the dense clusters.
+    # A true stable structure will have significant local mass.
+    cluster_mask = active_local_sums > (bounding_volume * 0.10) 
+    core_latches = active_local_sums[cluster_mask]
+    
+    # Calculate the average internal density of the stable structures
+    mean_internal_nodes = core_latches.mean().item()
+    structural_density = mean_internal_nodes / bounding_volume
+    
+    global_active = lattice.sum().item()
+    global_density = global_active / (GRID_SIZE**3)
+    
+    print("=========================================================")
+    print(" V211 STRUCTURAL TELEMETRY REPORT")
+    print("=========================================================")
+    print(f" Global Active Nodes:  {global_active:,}")
+    print(f" Global Vacuum Density:{global_density:.6f} (Sparse)")
+    print("---------------------------------------------------------")
+    print(f" V207 Bounding Volume: {bounding_volume} coordinates ({vol_size}^3)")
+    print(f" Mean Nodes per Latch: {mean_internal_nodes:.2f}")
+    print(f" INTERNAL STRUCTURAL DENSITY: {structural_density:.6f}")
+    print("=========================================================")
+
+def ignite():
+    print(f"[SYSTEM] FAST-FORWARDING ENGINE TO GEN {TARGET_GEN}...")
+    lattice = build_neo_seed(GRID_SIZE)
+    
+    for gen in range(1, TARGET_GEN + 1):
+        if gen % 10 == 0 and torch.cuda.is_available():
+            torch.cuda.empty_cache()
+            
+        lattice = step_generation(lattice)
+        if gen % 10 == 0:
+            print(f"    -> Reached Gen {gen}...")
+
+    interrogate_structure(lattice)
+
+if __name__ == '__main__':
+    ignite()
