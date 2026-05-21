@@ -2,7 +2,7 @@
 
 **Observative Tetrahedral Gravity (OTG) — A Discrete Computational Substrate for Physics**
 
-[![arXiv](https://img.shields.io/badge/arXiv-Endorsed-brightgreen)](https://arxiv.org/)
+[![arXiv](https://img.shields.io/badge/arXiv-Endorsement%20Pending-yellow)]()
 [![License](https://img.shields.io/badge/License-All_Rights_Reserved-red)]()
 [![Status](https://img.shields.io/badge/Status-Active_Research-blue)]()
 [![Structure](https://img.shields.io/badge/Structure-Rehabilitated_by_%40LabyrinthCoder-teal)]()
@@ -31,22 +31,23 @@ This framework proposes that **reality is discrete computation** — different p
 
 | Start here | Purpose |
 |-----------|---------|
-| [WHAT_THIS_IS.md](WHAT_THIS_IS.md) | Quick orientation — what this is and how to run it |
-| [RESEARCH_MAP.md](RESEARCH_MAP.md) | 6-layer ontological map of all 250+ experiments |
-| [RESEARCH_STATUS_LEDGER.md](RESEARCH_STATUS_LEDGER.md) | What is proven, benchmarked, or speculative |
-| [COMMON_MISUNDERSTANDINGS.md](COMMON_MISUNDERSTANDINGS.md) | What this project does and does not claim |
-| [KNOWN_GAPS.md](KNOWN_GAPS.md) | Honest research gaps and falsification criteria |
-| [STRUCTURE.md](STRUCTURE.md) | Full folder layout and organisation |
+| [Technical Dossier (PDF)](https://github.com/rookepoole/SVP-OTG-Poole-Manifold-tests/blob/main/Docs/Papers/Technical%20Dossier_%20Poole%20Manifold.pdf) | Complete technical description, constants, and predictions |
+| [WHAT_THIS_IS.md](https://github.com/rookepoole/SVP-OTG-Poole-Manifold-tests/blob/main/WHAT_THIS_IS.md) | Quick orientation — what this is and how to run it |
+| [RESEARCH_MAP.md](https://github.com/rookepoole/SVP-OTG-Poole-Manifold-tests/blob/main/RESEARCH_MAP.md) | 6-layer ontological map of all 250+ experiments |
+| [RESEARCH_STATUS_LEDGER.md](https://github.com/rookepoole/SVP-OTG-Poole-Manifold-tests/blob/main/RESEARCH_STATUS_LEDGER.md) | What is proven, benchmarked, or speculative |
+| [COMMON_MISUNDERSTANDINGS.md](https://github.com/rookepoole/SVP-OTG-Poole-Manifold-tests/blob/main/COMMON_MISUNDERSTANDINGS.md) | What this project does and does not claim |
+| [KNOWN_GAPS.md](https://github.com/rookepoole/SVP-OTG-Poole-Manifold-tests/blob/main/KNOWN_GAPS.md) | Honest research gaps and falsification criteria |
+| [STRUCTURE.md](https://github.com/rookepoole/SVP-OTG-Poole-Manifold-tests/blob/main/STRUCTURE.md) | Full folder layout and organisation |
 
 ### Experiment Folders
 
 | Folder | What's inside |
 |--------|--------------|
-| [experiments/physics/](experiments/physics/) | Poole Manifold engine, quantum, wave physics, cellular automata |
-| [experiments/cosmology/](experiments/cosmology/) | BAO, OTG, FLRW, DESI DR2, galaxy rotation, astrophysics |
-| [experiments/cpu_logic/](experiments/cpu_logic/) | Fluid CPU architecture, logic gates, adders, memory systems |
-| [experiments/materials/](experiments/materials/) | Materials science, biological, thermal, EM, fluid dynamics |
-| [experiments/scifi/](experiments/scifi/) | Sci-fi test scenarios: wormholes, starships, probes |
+| [Experiments/physics/](https://github.com/rookepoole/SVP-OTG-Poole-Manifold-tests/tree/main/Experiments/physics) | Poole Manifold engine, quantum, wave physics, cellular automata |
+| [Experiments/cosmology/](https://github.com/rookepoole/SVP-OTG-Poole-Manifold-tests/tree/main/Experiments/cosmology) | BAO, OTG, FLRW, DESI DR2, galaxy rotation, astrophysics |
+| [Experiments/cpu_logic/](https://github.com/rookepoole/SVP-OTG-Poole-Manifold-tests/tree/main/Experiments/cpu_logic) | Fluid CPU architecture, logic gates, adders, memory systems |
+| [Experiments/materials/](https://github.com/rookepoole/SVP-OTG-Poole-Manifold-tests/tree/main/Experiments/materials) | Materials science, biological, thermal, EM, fluid dynamics |
+| [Experiments/scifi/](https://github.com/rookepoole/SVP-OTG-Poole-Manifold-tests/tree/main/Experiments/scifi) | Sci-fi test scenarios: wormholes, starships, probes |
 
 ---
 
@@ -98,8 +99,8 @@ Classical cosmology attempts to map a discrete universe using continuous calculu
 ## Quick Start
 
 ```bash
-git clone https://github.com/rookepoole/Delta-RPM-Protocol.git
-cd Delta-RPM-Protocol
+git clone https://github.com/rookepoole/SVP-OTG-Poole-Manifold-tests.git
+cd SVP-OTG-Poole-Manifold-tests
 pip install -r requirements.txt
 ```
 
