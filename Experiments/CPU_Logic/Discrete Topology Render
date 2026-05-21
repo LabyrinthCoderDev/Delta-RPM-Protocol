@@ -1,0 +1,77 @@
+import networkx as nx
+import matplotlib.pyplot as plt
+
+def generate_modulo_graph(modulo_n, multiplier_a):
+    """
+    Generates a directed graph representing state transitions 
+    under the rule: next_state = (current_state * multiplier_a) % modulo_n
+    """
+    G = nx.DiGraph()
+    
+    # Add nodes representing all possible states from 0 to N-1
+    G.add_nodes_from(range(modulo_n))
+    
+    # Calculate transitions and add directed edges
+    for x in range(modulo_n):
+        next_x = (x * multiplier_a) % modulo_n
+        G.add_edge(x, next_x)
+        
+    return G
+
+def visualize_resonance():
+    # We will compare a Composite Modulo (6) and a Prime Modulo (7)
+    # using a constant computational tick (Multiplier = 2)
+    composite_n = 6
+    prime_n = 7
+    multiplier_a = 2
+    
+    # Generate the structural graphs
+    graph_composite = generate_modulo_graph(composite_n, multiplier_a)
+    graph_prime = generate_modulo_graph(prime_n, multiplier_a)
+    
+    # Set up the visual plot (Side by Side)
+    fig, axes = plt.subplots(1, 2, figsize=(14, 6))
+    fig.canvas.manager.set_window_title('Modulo Resonance Visualizer')
+    
+    # ---------------------------------------------------------
+    # PLOT 1: The Composite Collapse (Modulo 6)
+    # ---------------------------------------------------------
+    ax1 = axes[0]
+    ax1.set_title(f"Structural Collapse: Composite Modulo {composite_n}\nMultiplier: {multiplier_a}", fontsize=14, fontweight='bold', color='darkred')
+    
+    # Use a circular layout for the nodes
+    pos1 = nx.circular_layout(graph_composite)
+    
+    # Color node 0 (the void/collapse state) differently to highlight it
+    node_colors1 = ['red' if node == 0 else 'lightgray' for node in graph_composite.nodes()]
+    
+    nx.draw_networkx_nodes(graph_composite, pos1, ax=ax1, node_size=800, node_color=node_colors1, edgecolors='black')
+    nx.draw_networkx_labels(graph_composite, pos1, ax=ax1, font_size=12, font_weight='bold')
+    
+    # Draw edges with arrows indicating the flow of data
+    nx.draw_networkx_edges(graph_composite, pos1, ax=ax1, edge_color='black', arrows=True, arrowstyle='->', arrowsize=20, connectionstyle='arc3,rad=0.1')
+    ax1.axis('off')
+
+    # ---------------------------------------------------------
+    # PLOT 2: The Prime Latch (Modulo 7)
+    # ---------------------------------------------------------
+    ax2 = axes[1]
+    ax2.set_title(f"Immortal Latch: Prime Modulo {prime_n}\nMultiplier: {multiplier_a}", fontsize=14, fontweight='bold', color='darkgreen')
+    
+    pos2 = nx.circular_layout(graph_prime)
+    
+    node_colors2 = ['red' if node == 0 else 'lightgreen' for node in graph_prime.nodes()]
+    
+    nx.draw_networkx_nodes(graph_prime, pos2, ax=ax2, node_size=800, node_color=node_colors2, edgecolors='black')
+    nx.draw_networkx_labels(graph_prime, pos2, ax=ax2, font_size=12, font_weight='bold')
+    nx.draw_networkx_edges(graph_prime, pos2, ax=ax2, edge_color='black', arrows=True, arrowstyle='->', arrowsize=20, connectionstyle='arc3,rad=0.1')
+    ax2.axis('off')
+
+    # Display the comparison
+    plt.tight_layout()
+    plt.show()
+
+if __name__ == "__main__":
+    # Ensure matplotlib and networkx are installed: pip install matplotlib networkx
+    print("Initiating Discrete Topology Rendering...")
+    visualize_resonance()
