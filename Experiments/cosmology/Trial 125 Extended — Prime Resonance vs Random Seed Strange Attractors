@@ -1,0 +1,252 @@
+import torch
+import numpy as np
+import matplotlib.pyplot as plt
+import torch.nn.functional as F
+
+# ============================================================
+# Trial 125 Extended — Prime Resonance vs Random Seed
+# Framework Author: Rooke Alan Poole
+# Purpose: Test prediction of strange attractors
+#          and moire patterns vs actual OTG convergence
+# ============================================================
+
+B_LOW, B_HIGH = 5.0, 7.0
+S_LOW, S_HIGH = 5.0, 9.0
+GRID_SIZE = 100
+device = torch.device("cpu")
+
+kernel = torch.ones((1, 1, 3, 3, 3), device=device)
+kernel[0, 0, 1, 1, 1] = 0
+
+def get_primes_up_to(n):
+    primes = []
+    for num in range(2, n):
+        is_prime = True
+        for i in range(2, int(num**0.5) + 1):
+            if num % i == 0:
+                is_prime = False
+                break
+        if is_prime:
+            primes.append(num)
+    return primes
+
+def run_trial(seed_type='prime', n_gens=150, capture_gens=[1,5,15,30,60,150]):
+    """Run one trial and capture slice snapshots for visual analysis."""
+    torch.manual_seed(42)
+
+    field = torch.zeros((1,1,GRID_SIZE,GRID_SIZE,GRID_SIZE), device=device)
+    dust_mask = torch.rand((1,1,GRID_SIZE,GRID_SIZE,GRID_SIZE), device=device) < 0.10
+    field[dust_mask] = 1.0
+
+    mid = GRID_SIZE // 2
+
+    if seed_type == 'prime':
+        prime_coords = get_primes_up_to(GRID_SIZE - 5)
+        field[0,0,10:GRID_SIZE-10, mid-5:mid+5, mid-5:mid+5] = 0.0
+        for p in prime_coords:
+            field[0,0,p, mid-1:mid+2, mid-1:mid+2] = 1.0
+    else:
+        # Random seed — same density as dust_mask but no prime structure
+        torch.manual_seed(99)
+        rand_mask = torch.rand((1,1,GRID_SIZE,GRID_SIZE,GRID_SIZE), device=device) < 0.10
+        field[rand_mask] = 1.0
+
+    density_log    = []
+    volatility_log = []
+    slices         = {}   # gen -> 2D slice at mid z
+
+    for t in range(1, n_gens+1):
+        with torch.no_grad():
+            padded    = F.pad(field, (1,1,1,1,1,1), mode='circular')
+            potential = F.conv3d(padded, kernel, padding=0)
+            potential += torch.randn_like(potential) * 0.04
+
+        birth   = (field == 0) & (potential >= B_LOW) & (potential <= B_HIGH)
+        survive = (field == 1) & (potential >= S_LOW) & (potential <= S_HIGH)
+        new_field = (birth | survive).float()
+        new_field[dust_mask] = 1.0
+
+        density    = (torch.sum(new_field).item() / GRID_SIZE**3) * 100
+        flips      = torch.sum(torch.abs(new_field - field)).item()
+        density_log.append(density)
+        volatility_log.append(flips)
+
+        if t in capture_gens:
+            slices[t] = new_field[0,0,:,:,mid].cpu().numpy()
+
+        field = new_field
+
+    return density_log, volatility_log, slices
+
+# ============================================================
+# RUN BOTH TRIALS
+# ============================================================
+capture_gens = [1, 5, 15, 30, 60, 150]
+
+print("Running Trial 125 — Prime seed...")
+d_prime, v_prime, s_prime = run_trial('prime',  150, capture_gens)
+
+print("Running comparison — Random seed...")
+d_rand,  v_rand,  s_rand  = run_trial('random', 150, capture_gens)
+
+# ============================================================
+# FIGURE 1: Density + Volatility comparison
+# ============================================================
+fig1, axes = plt.subplots(2, 2, figsize=(14, 9))
+
+# Density
+ax = axes[0,0]
+ax.plot(d_prime, color='cyan',   linewidth=2, label='Prime seed')
+ax.plot(d_rand,  color='orange', linewidth=2, label='Random seed', alpha=0.7)
+ax.axhline(y=35.68, color='magenta', linestyle='--', linewidth=1.5,
+           label='Phoenix attractor (35.68%)')
+ax.axhline(y=33.33, color='red', linestyle=':', linewidth=1.5,
+           label='Poole Constant (33.33%)')
+ax.set_title("Density convergence — Prime vs Random seed", fontsize=11)
+ax.set_ylabel("Density %")
+ax.set_xlabel("Generation")
+ax.legend(fontsize=8)
+ax.grid(True, alpha=0.3)
+
+# Volatility
+ax = axes[0,1]
+ax.plot(v_prime, color='cyan',   linewidth=2, label='Prime seed')
+ax.plot(v_rand,  color='orange', linewidth=2, label='Random seed', alpha=0.7)
+ax.set_title("Volatility — State flips per generation", fontsize=11)
+ax.set_ylabel("Total state flips")
+ax.set_xlabel("Generation")
+ax.legend(fontsize=8)
+ax.grid(True, alpha=0.3)
+
+# Phase space — density vs volatility (strange attractor test)
+ax = axes[1,0]
+ax.plot(d_prime, v_prime, color='cyan',   linewidth=1, alpha=0.8, label='Prime seed')
+ax.plot(d_rand,  v_rand,  color='orange', linewidth=1, alpha=0.8, label='Random seed')
+# Mark start and end
+ax.scatter([d_prime[0]],  [v_prime[0]],  color='cyan',   s=80, marker='o', zorder=5, label='Prime start')
+ax.scatter([d_prime[-1]], [v_prime[-1]], color='cyan',   s=80, marker='*', zorder=5, label='Prime end')
+ax.scatter([d_rand[0]],   [v_rand[0]],   color='orange', s=80, marker='o', zorder=5, label='Random start')
+ax.scatter([d_rand[-1]],  [v_rand[-1]],  color='orange', s=80, marker='*', zorder=5, label='Random end')
+ax.set_title("Phase space — Density vs Volatility\n(Strange attractor test)", fontsize=11)
+ax.set_xlabel("Density %")
+ax.set_ylabel("Volatility (flips)")
+ax.legend(fontsize=7)
+ax.grid(True, alpha=0.3)
+
+# Final density comparison bar
+ax = axes[1,1]
+labels  = ['Prime\nfinal', 'Random\nfinal', 'Phoenix\nattractor', 'Poole\nConstant']
+values  = [d_prime[-1], d_rand[-1], 35.68, 33.33]
+colors  = ['cyan', 'orange', 'magenta', 'red']
+bars    = ax.bar(labels, values, color=colors, alpha=0.8, edgecolor='white')
+for bar, val in zip(bars, values):
+    ax.text(bar.get_x()+bar.get_width()/2, bar.get_height()+0.2,
+            f'{val:.2f}%', ha='center', fontsize=9)
+ax.set_title("Final density vs attractors", fontsize=11)
+ax.set_ylabel("Density %")
+ax.set_ylim(0, 45)
+ax.grid(True, alpha=0.3, axis='y')
+
+plt.suptitle("Trial 125 Extended Analysis — Prime Resonance vs Random\n"
+             "Testing strange attractor / moire prediction\n"
+             "Framework: Rooke Alan Poole",
+             fontsize=12, fontweight='bold')
+plt.tight_layout()
+plt.savefig("trial125_convergence_analysis.png", dpi=150, bbox_inches='tight')
+plt.show()
+print("Saved: trial125_convergence_analysis.png")
+
+# ============================================================
+# FIGURE 2: Slice snapshots — moire pattern detection
+# ============================================================
+fig2, axes2 = plt.subplots(2, len(capture_gens), figsize=(18, 7))
+
+for col, gen in enumerate(capture_gens):
+    # Prime slice
+    ax = axes2[0, col]
+    ax.imshow(s_prime[gen], cmap='inferno', interpolation='nearest', vmin=0, vmax=1)
+    ax.set_title(f"Gen {gen}", fontsize=9)
+    ax.axis('off')
+    if col == 0:
+        ax.set_ylabel("PRIME", fontsize=10, labelpad=30, rotation=0)
+
+    # Random slice
+    ax = axes2[1, col]
+    ax.imshow(s_rand[gen], cmap='inferno', interpolation='nearest', vmin=0, vmax=1)
+    ax.axis('off')
+    if col == 0:
+        ax.set_ylabel("RANDOM", fontsize=10, labelpad=30, rotation=0)
+
+plt.suptitle("2D Cross-sections (z=mid) — Prime vs Random seed\n"
+             "Early gens show prime structure; does it persist or dissolve?\n"
+             "Framework: Rooke Alan Poole",
+             fontsize=11, fontweight='bold')
+plt.tight_layout()
+plt.savefig("trial125_slice_snapshots.png", dpi=150, bbox_inches='tight')
+plt.show()
+print("Saved: trial125_slice_snapshots.png")
+
+# ============================================================
+# FIGURE 3: Difference map — prime vs random at each generation
+# Shows WHERE the two trials diverge spatially
+# ============================================================
+fig3, axes3 = plt.subplots(1, len(capture_gens), figsize=(18, 4))
+
+for col, gen in enumerate(capture_gens):
+    diff = np.abs(s_prime[gen] - s_rand[gen])
+    ax   = axes3[col]
+    im   = ax.imshow(diff, cmap='hot', interpolation='nearest', vmin=0, vmax=1)
+    ax.set_title(f"Gen {gen}\ndiff={diff.mean():.3f}", fontsize=9)
+    ax.axis('off')
+
+plt.suptitle("Spatial difference map — Prime minus Random\n"
+             "If moire patterns exist they appear here as interference fringes\n"
+             "Framework: Rooke Alan Poole",
+             fontsize=11, fontweight='bold')
+plt.tight_layout()
+plt.savefig("trial125_difference_map.png", dpi=150, bbox_inches='tight')
+plt.show()
+print("Saved: trial125_difference_map.png")
+
+# ============================================================
+# SUMMARY
+# ============================================================
+print("\n" + "="*60)
+print("TRIAL 125 — ANALYSIS SUMMARY")
+print("="*60)
+print(f"\nPrime seed final density  : {d_prime[-1]:.2f}%")
+print(f"Random seed final density : {d_rand[-1]:.2f}%")
+print(f"Phoenix attractor target  : 35.68%")
+print(f"Poole Constant            : 33.33%")
+print(f"\nDensity difference (prime vs random): {abs(d_prime[-1]-d_rand[-1]):.2f}%")
+
+# Strange attractor test
+# If strange attractor: phase space should show looping/fractal structure
+# If convergent: phase space should show a trajectory toward a point
+v_final_range_prime  = max(v_prime[-20:]) - min(v_prime[-20:])
+v_final_range_random = max(v_rand[-20:])  - min(v_rand[-20:])
+print(f"\nVolatility range (last 20 gens):")
+print(f"  Prime  : {v_final_range_prime:.0f} flips")
+print(f"  Random : {v_final_range_random:.0f} flips")
+
+if v_final_range_prime < 5000:
+    print(f"\nPrime seed: CONVERGED (low volatility variance)")
+    print(f"prediction of strange attractor: NOT CONFIRMED")
+else:
+    print(f"\nPrime seed: STILL CHAOTIC (high volatility variance)")
+    print(f"prediction of strange attractor: POSSIBLE")
+
+# Moire test
+early_diff  = np.abs(s_prime[capture_gens[1]] - s_rand[capture_gens[1]]).mean()
+late_diff   = np.abs(s_prime[capture_gens[-1]] - s_rand[capture_gens[-1]]).mean()
+print(f"\nSpatial difference (moire test):")
+print(f"  Gen {capture_gens[1]:3d} (early): {early_diff:.4f}")
+print(f"  Gen {capture_gens[-1]:3d} (late) : {late_diff:.4f}")
+
+if late_diff < early_diff * 0.5:
+    print(f"  Prime structure DISSOLVED into attractor — no persistent moire")
+elif late_diff > early_diff * 0.8:
+    print(f"  Prime structure PERSISTED — moire patterns present")
+else:
+    print(f"  Prime structure PARTIALLY dissolved")
+print("="*60)
